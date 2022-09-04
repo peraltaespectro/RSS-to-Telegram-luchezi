@@ -239,10 +239,10 @@ class PostFormatter:
             media_msg_count = await self.media.estimate_message_counts() \
                 if (display_media != DISABLE and self.media) else 0
             normal_msg_post = self.generate_formatted_post(sub_title=sub_title,
-                                                           tags=tags,
                                                            title_type=title_type,
                                                            via_type=via_type,
                                                            need_author=need_author,
+                                                           tags=tags,
                                                            message_type=NORMAL_MESSAGE,
                                                            message_style=message_style)
             normal_msg_len = get_plain_text_length(normal_msg_post)
@@ -315,10 +315,10 @@ class PostFormatter:
             if option_hash in self.__post_bucket:  # double check
                 return self.__post_bucket[option_hash]
             post = self.generate_formatted_post(sub_title=sub_title,
-                                                tags=tags,
                                                 title_type=title_type,
                                                 via_type=via_type,
                                                 need_author=need_author,
+                                                tags=tags,
                                                 message_type=message_type,
                                                 message_style=message_style)
             self.__post_bucket[option_hash] = post, need_media, need_link_preview
@@ -379,10 +379,10 @@ class PostFormatter:
         title = self.title or 'Untitled'
 
         # ---- hashtags ----
-        tags_html = Text(' '.join('' + tag for tag in tags)).get_html() if tags else None
-
+        tags_html = Text(' '.join('\n' + tag for tag in tags)).get_html() if tags else None
+        
         # ---- author ----
-        author_html = Text(f'(author: {self.author})').get_html() if need_author and self.author else None
+        author_html = Text(f'\nAutor: {self.author} \n').get_html() if need_author and self.author else None
 
         if message_style == NORMAL_STYLE:
             # ---- title ----
@@ -411,14 +411,14 @@ class PostFormatter:
 
             header = (
                     (title_html or '')
-                    + ('\n' if title_html and tags_html else '')
-                    + (tags_html or '')
+                    + ('\n' if title_html and author_html else '')
             )
 
             footer = (
                     (via_html or '')
-                    + (' ' if via_html and author_html else '')
+                    + ('\n' if via_html and tags_html else '')
                     + (author_html or '')
+                    + (tags_html or '')
             )
 
             return header, footer
@@ -455,14 +455,14 @@ class PostFormatter:
                     (feed_title_html or '')
                     + ('\n' if feed_title_html and title_html else '')
                     + (title_html or '')
-                    + ('\n' if (feed_title_html or title_html) and tags_html else '')
-                    + (tags_html or '')
+                    + ('\n' if (feed_title_html or title_html) and author_html else '')
             )
 
             footer = (
                     (sourcing_html or '')
-                    + ('\n' if sourcing_html and author_html else '')
+                    + ('\n' if sourcing_html and tags_html else '')
                     + (author_html or '')
+                    + (tags_html or '')
             )
 
             return header, footer
@@ -477,10 +477,10 @@ class PostFormatter:
                                 message_type: TypeMessageType,
                                 message_style: TypeMessageStyle) -> str:
         header, footer = self.get_post_header_and_footer(sub_title=sub_title,
-                                                         tags=tags,
                                                          title_type=title_type,
                                                          via_type=via_type,
                                                          need_author=need_author,
+                                                         tags=tags,
                                                          message_type=message_type,
                                                          message_style=message_style)
         content = self.parsed_html if message_type == NORMAL_MESSAGE else ''
