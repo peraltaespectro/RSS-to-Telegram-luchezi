@@ -404,7 +404,7 @@ class PostFormatter:
             elif via_type == BARE_LINK_VIA and self.link:
                 via_text = Text(self.link)
             elif via_type == TEXT_LINK_VIA and self.link:
-                via_text = Link('source', param=self.link)
+                via_text = Link(title, param=self.link)
             else:
                 via_text = None
             via_html = via_text.get_html() if via_text else None
