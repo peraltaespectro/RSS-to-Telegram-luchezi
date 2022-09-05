@@ -379,7 +379,7 @@ class PostFormatter:
         title = self.title or 'Untitled'
 
         # ---- hashtags ----
-        tags_html = Text\n(' '.join(' ' + tag for tag in tags)).get_html() if tags else None
+        tags_html = Text('\n'.join(' ' + tag for tag in tags)).get_html() if tags else None
         
         # ---- author ----
         author_html = Text(f'\nAutor: {self.author} \n').get_html() if need_author and self.author else None
